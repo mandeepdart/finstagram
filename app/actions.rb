@@ -60,8 +60,32 @@ post '/signup' do
 		"User #{username} saved!"
 
 	
-else 
-	erb(:signup)
+	else 
+		erb(:signup)
  
-	end 
+	end
+end
+get '/posts/new' do 
+	@post = Post.new
+	erb(:"posts/new")
+end 
+
+post '/posts' do 
+	photo_url = params[:photo_url]
+	if current_user 
+		@post = Post.new({ photo_url: photo_url, user_id: current_user.id })
+
+		if @post.save 
+			redirect(to('/'))
+		else
+		erb(:"posts/new")
+		end 
+	else 
+		redirect(to('/posts/new'))
+	end
+
+end 
+get '/posts/:id' do 
+	@post = Post.find(params[:id])
+	erb(:"posts/show")
 end 
