@@ -29,7 +29,16 @@ get '/' do
 	@posts =Post.order(created_at: :desc)
 	erb(:index)
 end 
+post '/comments' do 
+	text = params[:text]
+	post_id = params[:post_id]
 
+	comment= Comment.new({ text: text, post_id: post_id, user_id: current_user.id})
+
+	comment.save
+
+	redirect(back)
+end
  
 post '/signup' do 
 	email = params[:email]
@@ -68,6 +77,19 @@ end
 get '/posts/new' do 
 	@post = Post.new
 	erb(:"posts/new")
+end 
+post '/likes' do 
+	post_id = params[:post_id]
+
+	like = Like.new({ post_id: post_id, user_id: current_user.id})
+	like.save 
+
+	redirect(back)
+end 
+delete '/likes/:id' do 
+	like = Like.find(params[:id])
+	like.destroy
+	redirect(back) 
 end 
 
 post '/posts' do 
